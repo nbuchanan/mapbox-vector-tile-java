@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wdtinc</groupId>
-    <artifactId>mapbox-vector-tile</artifactId>
+    <artifactId>mapbox-vector-tile-shaded-pbf</artifactId>
     <version>3.0.0</version>
     <packaging>jar</packaging>
 
@@ -111,30 +111,63 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-gpg-plugin</artifactId>-->
+                <!--<version>1.5</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>sign-artifacts</id>-->
+                        <!--<phase>verify</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>sign</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.sonatype.plugins</groupId>-->
+                <!--<artifactId>nexus-staging-maven-plugin</artifactId>-->
+                <!--<version>1.6.7</version>-->
+                <!--<extensions>true</extensions>-->
+                <!--<configuration>-->
+                    <!--<serverId>ossrh</serverId>-->
+                    <!--<nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
+                    <!--<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <version>3.5.1.1</version>
                 <executions>
                     <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>sign</goal>
+                            <goal>run</goal>
                         </goals>
+                        <configuration>
+                            <protocArtifact>com.google.protobuf:protoc:3.5.1</protocArtifact>
+
+                            <inputDirectories>
+                                <include>src/main/resources</include>
+                            </inputDirectories>
+
+                            <addProtoSources>inputs</addProtoSources>
+                            <includeStdTypes>true</includeStdTypes>
+
+                            <outputTargets>
+                                <outputTarget>
+                                    <type>java-shaded</type>
+                                    <addSources>main</addSources>
+                                    <outputDirectory>src/main/java</outputDirectory>
+                                </outputTarget>
+                            </outputTargets>
+
+                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -149,10 +182,11 @@
         </dependency>
 
         <!-- MVT encoding -->
+        <!-- Using this instead of the primary protobuf-java library to avoid downstream conflicts -->
         <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>3.5.1</version>
+            <groupId>com.github.os72</groupId>
+            <artifactId>protobuf-java-shaded-351</artifactId>
+            <version>0.9</version>
         </dependency>
 
         <!-- Geometry model -->
